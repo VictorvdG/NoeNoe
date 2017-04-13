@@ -14,4 +14,20 @@ public class Main {
 		arby.start();
 
 	}
+	
+	public boolean takeControl() {
+		
+	}
+	
+
+	
+	public void action () {
+		suppress = false;
+		Motor.A.forward();
+		Motor.C.forward();
+	}
+	
+	public void suppress() {
+		
+	}
 }
