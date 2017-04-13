@@ -16,3 +16,16 @@ program LINE FOLLOWING
 	done repeat
 	
 done program	
+
+Kp = 10                               // Initialize our three variables
+offset = 45
+Tp = 50
+Loop forever
+   LightValue = read light sensor     // what is the current light reading?
+   error = LightValue - offset        // calculate the error by subtracting the offset
+   Turn = Kp * error                  // the "P term", how much we want to change the motors' power
+   powerA = Tp + Turn                 // the power level for the A motor
+   powerC = Tp - Turn                 // the power level for the C motor
+   MOTOR A direction=forward power=powerA // issue the command with the new power level in a MOTOR block
+   MOTOR C direction=forward power=powerC // same for the other motor but using the other power level
+end loop forever    
