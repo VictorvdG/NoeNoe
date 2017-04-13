@@ -29,3 +29,5 @@ Loop forever
    MOTOR A direction=forward power=powerA // issue the command with the new power level in a MOTOR block
    MOTOR C direction=forward power=powerC // same for the other motor but using the other power level
 end loop forever    
+
+//http://www.inpharmix.com/jps/PID_Controller_For_Lego_Mindstorms_Robots.html uitleg
