@@ -1,0 +1,18 @@
+program LINE FOLLOWING
+
+	white = 0, black = 0
+	CALIBRATE()
+	
+	midpoint = ( black - white ) / 2 + white
+	kp=1;
+
+	repeat
+	
+		value = Read Light Sensor
+		correction = kp * ( midpoint - value ) 
+		
+		Turn B+C Motors by correction
+		
+	done repeat
+	
+done program	
