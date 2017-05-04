@@ -1,12 +1,14 @@
 package RobotX;
 
 import lejos.robotics.LightScanner;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.subsumption.Arbitrator;
 import lejos.robotics.subsumption.Behavior;
 
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
+import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -32,23 +34,27 @@ public class Main {
     // sensors should undergo if necessary.
     final static int INC = 0;
 
-    public static void main (String[] aArg) throws Exception {
+    public static void main (String[] Args) throws Exception {
     	// Variable for the motors controlling the robots wheels. Used for
     	// controlling robot motion.
-    	final Pilot pilot = new Pilot(2.3f,1.5f,Motor.A, Motor.C, false);
+    	//final Pilot pilot = new Pilot(2.3f,1.5f,Motor.A, Motor.C, false);
     	// Variable for the central light sensor.
-    	//final LightSensor light = new ColorSensor(SensorPort.S1);
+    	//final LightSensor light = new LightSensor(SensorPort.S1);
     	// Variable for the left light sensor.
     	//final LightSensor light2 = new LightSensor(SensorPort.S2);
     	// Variable for the right light sensor.
     	//final LightSensor light3 = new LightSensor(SensorPort.S3);
     	// Variable for brick screen. Used for displaying robot status.
     	
+    	DifferentialPilot pilot = new DifferentialPilot(2.3f,1.5f,Motor.A, Motor.C, false);  // parameters in inches
+    	
     
     	EV3ColorSensor light = new EV3ColorSensor(SensorPort.S2);
     	final EV3UltrasonicSensor u = new EV3UltrasonicSensor(SensorPort.S1);
-    			
-    	final LCD screen = new LCD();
+    	
+   
+    	
+ //   	final LCD screen = new LCD();
 
     	// This behavior controls the robot's actions upon discovering an
     	// intersection. SInce intersection detection and action is a major
@@ -71,13 +77,14 @@ public class Main {
     		public boolean takeControl() {
     			// Checks to see if the sensor readings are within the range
     			// for which they calssify as a line.
-    			boolean center = light.readValue(SensorPort.S2) <= THRESHOLD;
+    			boolean center = light.getColorID() <= THRESHOLD;
     		
     		//	boolean left = light2.readValue() <= THRESHOLD + INC;
     		//	boolean right = light3.readValue() <= THRESHOLD + INC;
     			
     			// Returns true if all sensors read a line
-    			return center && left && right;
+    			return center; 
+    		//	&& left && right;
     		}
 		
     		// This method controls what to do when the method stops. Since
@@ -96,16 +103,16 @@ public class Main {
     			if(n < 0) {n = initN;}
     			// A variable to indicate the previous value read by the light sensor.
     			// Used for determining whether a spoke has already been scanned or not.
-    			int lastVal = light.readValue();
+    			int lastVal = light.getColorID();
     			
     			// Update the robot's display with the relevant information
     			// concerning light readings and behavior status.
-    			screen.clearDisplay();
-    			screen.drawString("C: " + light.readValue(), 0, 0);
+    		//	screen.clearDisplay();
+    		//	screen.drawString("C: " + light.getColorID(), 0, 0);
     		//	screen.drawString("L: " + light2.readValue(), 0, 1);
     		//	screen.drawString("R: " + light3.readValue(), 0, 2);
-    			screen.drawString("Running Behavior: Intersection", 0, 3);
-    			screen.drawString("Intersection", 0, 4);
+    		//	screen.drawString("Running Behavior: Intersection", 0, 3);
+    		//	screen.drawString("Intersection", 0, 4);
     			
     			// Make a quick double beep to indicate that the intersection
     			// has been found and is being handled.
@@ -116,7 +123,7 @@ public class Main {
     			// central axle is approximately at the location of where its
     			// sensors were previously. This allows it to rotate and properly
     			// detect the spokes. Stop after the brief pause.
-    			pilot.setSpeed(300);
+    			pilot.setTravelSpeed(300);
     			pilot.forward();
     			try {Thread.sleep(450);} catch(Exception e) {}
     			pilot.stop();
@@ -128,7 +135,7 @@ public class Main {
     			// for orientation purposes so that can start detecting spokes clockwise
     			// from the one it started at. Pause to give the robot time to finish
     			// before moving on.
-    			pilot.setSpeed(SPEED);
+    			pilot.setTravelSpeed(SPEED);
 		    	pilot.rotate(180);
 		    	pilot.rotate(180);
 		    	try {Thread.sleep(450);} catch(Exception e) {}
@@ -142,16 +149,16 @@ public class Main {
 		    		
 		    		// Update the display data for the robot's new position
 		    		// and also note the number of spokes left to find
-		    		screen.clearDisplay();
-		    		screen.drawString("C: " + light.readValue(), 0, 0);
+		    	//	screen.clearDisplay();
+		    	//	screen.drawString("C: " + light.getColorID(), 0, 0);
 		    	//	screen.drawString("L: " + light2.readValue(), 0, 1);
 		    	//	screen.drawString("R: " + light3.readValue(), 0, 2);
-		    		screen.drawString("Running Behavior", 0, 3);
-		    		screen.drawString("HunterSeeker", 0, 4);
-		    		screen.drawString("N: " + n, 0, 5);
+		    	//	screen.drawString("Running Behavior", 0, 3);
+		    	//	screen.drawString("HunterSeeker", 0, 4);
+		    	//	screen.drawString("N: " + n, 0, 5);
 		    		
 		    		// If the center light reads a line, we have found a spoke
-		    		if(light.readValue() <= THRESHOLD) {
+		    		if(light.getColorID() <= THRESHOLD) {
 		    			// If the previous value was not a line, then we know
 		    			// we have now moved over a line and can mark off a spoke.
 		    			if(lastVal > THRESHOLD) {
@@ -162,7 +169,7 @@ public class Main {
 		    			}
 		    		}
 		    		// Set the last value to the current value.
-		    		lastVal = light.readValue();
+		    		lastVal = light.getColorID();
 		    		// If we have no spokes left to find, we're done.
 		    		if(n < 0) {suppressor = true;}
 		    	}
@@ -181,12 +188,13 @@ public class Main {
 	    	// line. Otherwise, a different behavior should handle the robot's actions.
 	    	public boolean takeControl() {
 	    		// Determine whether each sensor picks up a line.
-	    		boolean center = light.readValue() <= THRESHOLD;
+	    		boolean center = light.getColorID() <= THRESHOLD;
 	    	//	boolean left = light2.readValue() <= THRESHOLD + INC;
 	    	//	boolean right = light3.readValue() <= THRESHOLD + INC;
 	    		
 	    		// Only return true if only the center sensor detects a line.
-	    		return center && !left && !right;
+	    		return center; 
+	    	//	&& !left && !right;
 	    	}
 	    	
 	    	// When this method ends, the robot merely needs to stop. So long as only the
@@ -198,15 +206,15 @@ public class Main {
 	    	// screen for out viewing pleasure and keep chugging along at the default speed.
 	    	public void action() {
 	    		// Update the sensor screen.
-	    		screen.clearDisplay();
-	    		screen.drawString("C: " + light.readValue(), 0, 0);
+	    	//	screen.clearDisplay();
+	    	//	screen.drawString("C: " + light.getColorID(), 0, 0);
 	    	//	screen.drawString("L: " + light2.readValue(), 0, 1);
 	    	//	screen.drawString("R: " + light3.readValue(), 0, 2);
-	    		screen.drawString("Running Behavior: Drive", 0, 3);
-	    		screen.drawString("Drive", 0, 4);
+	    	//	screen.drawString("Running Behavior: Drive", 0, 3);
+	    	//	screen.drawString("Drive", 0, 4);
 	    		
 	    		// Set the speed to the default value and move forward.
-	    		pilot.setSpeed(SPEED);
+	    		pilot.setTravelSpeed(SPEED);
 	    		pilot.forward();
 	    	}					
 	    };
@@ -225,7 +233,7 @@ public class Main {
 	    	// means that the robot is no longer following the line and must reorientate itself.
 	    	public boolean takeControl() {
 	    		// Determine if the center sensor is reading a line.
-	    		boolean center = light.readValue() <= THRESHOLD;
+	    		boolean center = light.getColorID() <= THRESHOLD;
 	    		
 	    		// Return true if it is not.
 	    		return !center;
@@ -240,12 +248,12 @@ public class Main {
 	    	// This method contains the actions the robot should take to locate a new lone to follow.
 	    	public void action() {
 	    		// Updates the display screen.
-	    		screen.clearDisplay();
-	    		screen.drawString("C: " + light.readValue(), 0, 0);
+	    	//	screen.clearDisplay();
+	    	//	screen.drawString("C: " + light.getColorID(), 0, 0);
 	    	//	screen.drawString("L: " + light2.readValue(), 0, 1);
 	    	//	screen.drawString("R: " + light3.readValue(), 0, 2);
-	    		screen.drawString("Running Behavior", 0, 3);
-	    		screen.drawString("Search", 0, 4);
+	    	//	screen.drawString("Running Behavior", 0, 3);
+	    	//	screen.drawString("Search", 0, 4);
 	    		
 	    		// This variable indicates whether the robot should continue in only one direction
 	    		// while turning. This should be false if the robot has no idea where a line is, as
@@ -262,7 +270,7 @@ public class Main {
 	    	//	if(light2.readValue() <= THRESHOLD) {initTrue = true;}
 	    		
 	    		// Set the robot's speed to default.
-	    		pilot.setSpeed(SPEED);
+	    		pilot.setTravelSpeed(SPEED);
 	    		
 	    		// While the robot has no accomplished its goals...
 	    		while (!suppress) {
@@ -283,12 +291,12 @@ public class Main {
 	    			else {sweep *= -2;}
 	    			
 	    			// Update the display with the current information.
-	    			screen.clearDisplay();
-	    			screen.drawString("C: " + light.readValue(), 0, 0);
+//	    			screen.clearDisplay();
+//	    			screen.drawString("C: " + light.getColorID(), 0, 0);
 	    	//		screen.drawString("L: " + light2.readValue(), 0, 1);
 	    	//		screen.drawString("R: " + light3.readValue(), 0, 2);
-	    			screen.drawString("Running Behavior", 0, 3);
-	    			screen.drawString("Search", 0, 4);
+//	    			screen.drawString("Running Behavior", 0, 3);
+//	    			screen.drawString("Search", 0, 4);
 	    		}
 	    		// Stop the robot once it has found its goal
 	    		pilot.stop();
