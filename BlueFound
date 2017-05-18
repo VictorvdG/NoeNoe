@@ -22,7 +22,7 @@ public class BlueFound implements Behavior {
 
 	
 	public static void beepSequenceUp() {
-		
+		systemSound(true, DESCENDING);
 	}
 	
 	public void play() {
@@ -49,7 +49,7 @@ public class BlueFound implements Behavior {
 	public void action() {
 		suppressed = false;
 		play();
-		System.exit(0);
+//		System.exit(0);
 
 	}
 
