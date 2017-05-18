@@ -1,0 +1,17 @@
+public class calibrate {
+
+	private static final int SAMPLES = 100;
+	colorSensor sample = new colorSensor();
+
+	public calibrate(colorSensor s) {
+		this.sample = s;
+	}
+
+	public float sampleValue() {
+		float sum = 0;
+		for (int i = 0; i < SAMPLES; i++) {
+			sum = sum + sample.getSample()[0];
+		}
+		return sum/SAMPLES;
+	}
+}
