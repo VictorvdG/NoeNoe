@@ -1,0 +1,44 @@
+package robotX;
+
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.robotics.subsumption.Behavior;
+
+public class SonarDetected implements Behavior {
+
+	private Ultrasonic sonar;
+	private boolean suppressed = false;
+
+	public SonarDetected() {
+		sonar = new Ultrasonic();
+	}
+
+	/**
+	 * Takes control when the ultrasonicsensor has been triggered
+	 */
+	public boolean takeControl() {
+		return sonar.getDistance()[0] < 0.2;
+
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	/**
+	 * When triggered the robot rotates backwards
+	 */
+	public void action() {
+		suppressed = false;
+		Motor.A.rotate(-180, true);
+		Motor.C.rotate(-360, true);
+
+		while (Motor.C.isMoving() && !suppressed)
+			Thread.yield();
+
+		Motor.A.stop();
+		Motor.C.stop();
+		
+	}
+}
