@@ -1,0 +1,37 @@
+public class colorSensor {
+	private static Port colorSensorPort = SensorPort.S2;
+	private static EV3ColorSensor colorSensor;
+	private static SampleProvider redSampleProvider;
+	private static int sampleSize;
+
+	public colorSensor() {
+		// Initializes the sensor & sensor mode
+		colorSensor = new EV3ColorSensor(colorSensorPort);
+		redSampleProvider = colorSensor.getRedMode();
+		sampleSize = redSampleProvider.sampleSize();
+//		colorSensor.setFloodlight(true);
+		LCD.clear();
+	}
+
+	 public static float[] getSample() {
+		float[] sample = new float[sampleSize];			// Initializes the array for holding samples
+		redSampleProvider.fetchSample(sample, 0);		// Gets the sample and returns it
+		for (int i = 0; i < sampleSize; i++) {			// Takes some samples and prints them
+			LCD.drawString("sample[" + i + "] is " + sample[i], 0, 0);
+			System.out.println("sample[" + i + "] is " + sample[i]);
+		}
+		try {
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	return sample;
+
+	}
+
+	public int colorID() {
+		return colorSensor.getColorID();
+	}
+
+
+}
