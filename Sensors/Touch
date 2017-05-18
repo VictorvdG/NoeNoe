@@ -1,0 +1,30 @@
+package robotX;
+
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3TouchSensor;
+
+public class Touch {
+	EV3TouchSensor touch;
+
+	float[] sample;
+
+	/**
+	 * Activates the Touchsensor
+	 */
+	public Touch() {
+		touch = new EV3TouchSensor(SensorPort.S3);
+		touch.getTouchMode();
+		sample = new float[touch.sampleSize()];
+	}
+
+	/**
+	 * @return sample values in array
+	 */
+	public float[] getDistance() {
+		touch.fetchSample(sample, 0);
+		System.out.printf("%.5f m\n", sample[0]);
+		return sample;
+	}
+
+}
