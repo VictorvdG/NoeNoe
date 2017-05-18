@@ -1,7 +1,7 @@
 import lejos.hardware.motor.Motor;
 import lejos.robotics.subsumption.Behavior;
 
-public class DriveForward implements Behavior {
+public class moveToGrid implements Behavior {
 	private boolean suppressed = false;
 
 	public boolean takeControl() {
