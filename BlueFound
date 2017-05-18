@@ -1,0 +1,62 @@
+package RobotX;
+
+import lejos.hardware.Sound;
+import lejos.robotics.subsumption.Behavior;
+
+
+
+public class BlueFound implements Behavior {
+	private boolean suppressed = false;
+
+		
+
+	public BlueFound() {
+		
+	}
+
+//	public static void playSoundFile(java.lang.String fileName, boolean repeat) {
+//		fileName = "Bingo.rbt";
+//		repeat = false;
+//	}
+	
+
+	
+	public static void beepSequenceUp() {
+		
+	}
+	
+	public void play() {
+		
+		
+		
+		
+//		playSoundFile("Bingo.rbt", false);
+		
+		Sound.setVolume(10);
+		beepSequenceUp();
+	
+			if (suppressed)
+				return;
+		}
+	
+
+	@Override
+	public boolean takeControl() {
+		return false;
+	}
+
+	@Override
+	public void action() {
+		suppressed = false;
+		play();
+		System.exit(0);
+
+	}
+
+	@Override
+	public void suppress() {
+		suppressed = true;
+
+	}
+
+}
