@@ -1,0 +1,29 @@
+package robotX;
+
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+
+public class Ultrasonic {
+	EV3UltrasonicSensor sonic;
+	float[] sample;
+
+	/**
+	 * Activates the Ultrasonicsensor
+	 */
+	public Ultrasonic() {
+		sonic = new EV3UltrasonicSensor(SensorPort.S1);
+		sonic.getDistanceMode();
+		sample = new float[sonic.sampleSize()];
+	}
+
+	/**
+	 * @return sample values in array 
+	 */
+	public float[] getDistance() {
+		sonic.fetchSample(sample, 0);
+		System.out.printf("%.5f m\n", sample[0]);
+		return sample;
+	}
+
+}
