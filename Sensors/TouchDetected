@@ -1,0 +1,42 @@
+package robotX;
+
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.Port;
+import lejos.robotics.subsumption.Behavior;
+
+public class TouchDetected implements Behavior {
+
+	private Touch touch;
+	private boolean suppressed = false;
+
+	public TouchDetected() {
+		touch = new Touch();
+	}
+
+	/**
+	 * Takes control when the touchsensor has been triggered
+	 */
+	public boolean takeControl() {
+		return touch.getDistance()[0] == 1;
+	}
+
+	public void suppress() {
+		suppressed = true;
+	}
+
+	/**
+	 * When triggered the robot rotates backwards
++	 */
+	public void action() {
+		suppressed = false;
+		Motor.A.rotate(-180, true);
+		Motor.C.rotate(-360, true);
+
+		while (Motor.C.isMoving() && !suppressed)
+			Thread.yield();
+
+		Motor.A.stop();
+		Motor.C.stop();
+
+	}
+}
