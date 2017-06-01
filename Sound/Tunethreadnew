@@ -1,0 +1,42 @@
+package RobotX;
+
+
+	import lejos.hardware.Sound;
+	import lejos.robotics.subsumption.Behavior;
+
+	/**
+	 * Thread to play the tune
+	 */
+	public class TuneThread implements Behavior {	
+		
+	private boolean suppressed = false;
+
+	public boolean takeControl() {
+		return true;
+	}
+
+
+	public void suppress() {
+		suppressed = true;
+	}
+		
+		@Override
+		public void action()
+		{
+			playTune();
+		}
+	    
+	    /**
+	     * Play the leJOS startup tune.
+	     */
+	    static void playTune()
+	    {
+	    	
+	    	Sound.beepSequenceUp();
+
+
+	        }
+	    }
+
+	
+
