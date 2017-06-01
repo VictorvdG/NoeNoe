@@ -1,13 +1,20 @@
+package robotX2;
+
 import lejos.hardware.motor.Motor;
 import lejos.robotics.subsumption.Behavior;
 
 public class DriveForward implements Behavior {
 	private boolean suppressed = false;
+	private boolean done = false;
+	private SensorSamples ss;
 
-	public boolean takeControl() {
-		return true;
+	public DriveForward(SensorSamples ss) {
+		this.ss = ss;
 	}
 
+	public boolean takeControl() {
+		return !done;
+	}
 
 	public void suppress() {
 		suppressed = true;
@@ -15,15 +22,12 @@ public class DriveForward implements Behavior {
 
 	public void action() {
 		suppressed = false;
-		Motor.A.setSpeed(540);
-		Motor.C.setSpeed(540);
 		Motor.A.forward();
 		Motor.C.forward();
 		while (!suppressed)
-			Thread.yield();
-		Motor.A.stop(); // clean up
-		Motor.C.stop();
-
+			if (ss.redSample()[0] > 0.35) {
+				done = true;
+				suppress();
+			}
 	}
-
 }
