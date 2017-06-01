@@ -1,0 +1,56 @@
+package robotX2;
+
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.Color;
+import lejos.robotics.SampleProvider;
+
+public class SensorSamples {
+	final static Port COLOR = SensorPort.S3;
+	final static Port SONIC = SensorPort.S1;
+	private EV3ColorSensor colorSensor;
+	private EV3UltrasonicSensor sonicSensor;
+	private SampleProvider redProvider;
+	private SampleProvider rgbProvider;
+	private float[] redSample;
+	private float[] rgbSample;
+	private float[] distanceSample;
+
+	public SensorSamples() {
+		colorSensor = new EV3ColorSensor(COLOR);
+		sonicSensor = new EV3UltrasonicSensor(SONIC);
+		sonicSensor.getDistanceMode();
+		redProvider = colorSensor.getRedMode();
+		rgbProvider = colorSensor.getRGBMode();
+		redSample = new float[redProvider.sampleSize()];
+		rgbSample = new float[rgbProvider.sampleSize()];
+		distanceSample = new float[sonicSensor.sampleSize()];
+	}
+
+	public int colorID() {
+		// Get the color ID from the sensor and return it to the caller.
+		return colorSensor.getColorID();
+	}
+
+	public float[] redSample() {
+		// Get the red mode sample and return it to the caller.
+		colorSensor.setFloodlight(true);
+		redProvider.fetchSample(redSample, 0);
+		return redSample;
+	}
+
+	public float[] rgbSample() {
+		// Get the RGB sample and return it to the caller.
+		colorSensor.setFloodlight(Color.WHITE);
+		rgbProvider.fetchSample(rgbSample, 0);
+		return rgbSample;
+	}
+
+	public float[] distanceSample() {
+		// Get the distance to an object and return it to the caller.
+		sonicSensor.fetchSample(distanceSample, 0);
+		return distanceSample;
+	}
+}
