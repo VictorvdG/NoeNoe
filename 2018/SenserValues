@@ -1,0 +1,35 @@
+package nl.ru.ai.roboterham;
+
+public class SensorValues {
+	public SensorSamples sample;
+	final static int NR_OF_SAMPLES = 100;
+	
+	public SensorValues(SensorSamples sample){
+		this.sample = sample;
+	}
+	
+	public float redValue(){
+		float value = 0;
+		for (int ind = 0; ind < NR_OF_SAMPLES; ind++){
+			value += sample.redSample()[0];
+		}
+		return value/NR_OF_SAMPLES;
+	}
+	
+	public float rgbValue(){
+		float value = 0;
+		for (int ind = 0; ind < NR_OF_SAMPLES; ind++){
+			value += sample.rgbSample()[0];
+		}
+		return value/NR_OF_SAMPLES;
+	}
+	
+
+	public float distanceValue() {
+		float value = 0;
+		for (int ind = 0; ind < NR_OF_SAMPLES; ind++){
+			value += sample.distanceSample()[0];
+		}
+		return value/NR_OF_SAMPLES;
+	}
+}
