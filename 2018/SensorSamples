@@ -1,0 +1,55 @@
+package nl.ru.ai.roboterham;
+
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3TouchSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.Color;
+import lejos.robotics.SampleProvider;
+
+public class SensorSamples {
+	final static Port ColorIn = SensorPort.S1;
+	final static Port TouchIn = SensorPort.S2;
+	final static Port SonicIn = SensorPort.S3;
+	EV3TouchSensor touch;
+	EV3ColorSensor color;
+	EV3UltrasonicSensor sonic;
+	SampleProvider redProvider;
+	SampleProvider rgbProvider;
+	SampleProvider distanceProvider;
+	float[] redSample;
+	float[] rgbSample;
+	float[] distanceSample;
+
+	public SensorSamples() {
+		touch = new EV3TouchSensor(TouchIn);
+		color = new EV3ColorSensor(ColorIn);
+		sonic = new EV3UltrasonicSensor(SonicIn);
+		redProvider = color.getRedMode();
+		redSample = new float[redProvider.sampleSize()];
+		rgbProvider = color.getRGBMode();
+		rgbSample = new float[rgbProvider.sampleSize()];
+		distanceProvider = sonic.getDistanceMode();
+		distanceSample= new float[distanceProvider.sampleSize()];
+	}
+
+	public float[] redSample() {
+		// Get the red mode sample and return it to the caller.
+		color.setFloodlight(true);
+		redProvider.fetchSample(redSample, 0);
+		return redSample;
+	}
+
+	public float[] rgbSample() {
+		// Get the RGB sample and return it to the caller.
+		color.setFloodlight(Color.WHITE);
+		rgbProvider.fetchSample(rgbSample, 0);
+		return rgbSample;
+	}
+	
+	public float[] distanceSample() {
+		distanceProvider.fetchSample(distanceSample, 0);
+		return distanceSample;
+	}
+}
